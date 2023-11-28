@@ -8,36 +8,26 @@ First, the project provides a containerized version of it to play a bit. To depl
 docker-compose -f simple-kafka.yml up
 ```
 
-**Important Caveat:** Note that by default, the broker is only (and only) accessible from the host machine at `localhost:29092`. To enable remote access, you should modify the `KAFKA_ADVERTISED_LISTENERS` environment variable in the `docker-compose.yml` file. More info in [this article](https://rmoff.net/2018/08/02/kafka-listeners-explained).
+**Important Caveat:** Note that by default, the broker is only (**and only**) accessible from the host machine at `localhost:29092`. To enable remote access, you should modify the `DOCKER_HOST_IP` in the `.env` file (see `.env.sample`). To properly understand what's actually going on, check [this article](https://rmoff.net/2018/08/02/kafka-listeners-explained).
 
-## Full Stack Kafka Broker
-
-A full stack Kafka broker is provided. It is based on the [conduktor/kafka-stack-docker-compose](https://github.com/conduktor/kafka-stack-docker-compose). Before running it, note that the `DOCKER_HOST_IP` environment variable should be set to the IP of the host machine. A convinient way to do that is to create a `.env` file in the `tests/kafka_server_mock` folder with the following content:
-
-```bash
-DOCKER_HOST_IP=X.X.X.X
-```
-
-Now, to deploy it, run:
-
-```bash
-docker-compose -f kafka-full-stack.yml up
-```
-
-Wait a bit and a nice GUI for Kafka will be available at `$DOCKER_HOST_IP:8080`.
 
 ## Testing the Kafka Broker
 
-To test the Kafka broker, you can use the `kafka_server_mock.py` script. It is a simple script that uses the `kafka-python` library to send and receive messages from the broker. To run it, first install the dependencies:
+### Kafka CLI
+
+I find handy and usefull to use the [kcat](https://github.com/edenhill/kcat#running-in-docker) tool to test the Kafka broker. The easiest and cleanest way is to use the docker image
 
 ```bash
-virtualenv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+docker run -it --network=host edenhill/kcat:1.7.1 -b '$BROKER_IP':29092 -L
 ```
 
-Then, run the script:
+Where `$BROKER_IP` is the IP of the host machine (the same set in `KAFKA_ADVERTISED_LISTENER`). This will list the topics available in the broker. 
 
-```bash
-python -m unittest test_kafka_consumer_producer.py
+If the broker is up and running, you should see something like that:
+
+```source
+Metadata for all topics (from broker -1: 192.168.200.253:29092/bootstrap):
+ 1 brokers:
+  broker 1 at localhost:29092 (controller)
+ 0 topics:
 ```
