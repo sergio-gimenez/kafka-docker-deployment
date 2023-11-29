@@ -21,7 +21,7 @@ I find handy and usefull to use the [kcat](https://github.com/edenhill/kcat#runn
 docker run -it --network=host edenhill/kcat:1.7.1 -b '$BROKER_IP':29092 -L
 ```
 
-Where `$BROKER_IP` is the IP of the host machine (the same set in `KAFKA_ADVERTISED_LISTENER`). This will list the topics available in the broker. 
+Where `$BROKER_IP` is the IP of the host machine (the same set in `DOCKER_HOST_IP`). This will list the topics available in the broker. 
 
 If the broker is up and running, you should see something like that:
 
